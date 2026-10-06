@@ -1,11 +1,15 @@
 from flask import Flask, request, jsonify
-from detector import llm_classifier, stylometric_score
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime
 import uuid
 import json
 import os
+from detector import (
+    llm_classifier,
+    stylometric_score,
+    repetition_score
+)
 
 app = Flask(__name__)
 limiter = Limiter(
@@ -60,10 +64,12 @@ def submit():
 
     llm_score = llm_classifier(text)
     style_score = stylometric_score(text)
+    repetition = repetition_score(text)
 
     confidence = round(
-        (0.6 * llm_score) +
-        (0.4 * style_score),
+        (0.5 * llm_score) +
+        (0.3 * style_score) +
+        (0.2 * repetition),
         2
     )
     content_id = str(uuid.uuid4())
@@ -84,6 +90,7 @@ def submit():
         "confidence": confidence,
         "llm_score": llm_score,
         "stylometric_score": style_score,
+        "repetition_score": repetition,
         "status": "classified"
     }
 
@@ -94,6 +101,7 @@ def submit():
             "confidence": confidence,
             "llm_score": llm_score,
             "stylometric_score": style_score,
+            "repetition_score": repetition,
             "status": "classified"
         }
 
@@ -103,7 +111,8 @@ def submit():
         "confidence": confidence,
         "label": generate_label(confidence),
         "llm_score": llm_score,
-        "stylometric_score": style_score
+        "stylometric_score": style_score,
+        "repetition_score": repetition
     })
 
 

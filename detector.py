@@ -4,6 +4,7 @@ import re
 import statistics
 from groq import Groq
 from dotenv import load_dotenv
+from collections import Counter
 
 load_dotenv()
 
@@ -66,3 +67,28 @@ def stylometric_score(text):
     ttr_score = max(0, min(1, 1 - ttr))
 
     return round((variance_score + ttr_score) / 2, 2)
+
+def repetition_score(text):
+
+    words = [
+        word.lower()
+        for word in text.split()
+    ]
+
+    if len(words) < 10:
+        return 0.5
+
+    counts = Counter(words)
+
+    repeated_words = sum(
+        count - 1
+        for count in counts.values()
+        if count > 1
+    )
+
+    score = repeated_words / len(words)
+
+    return round(
+        min(score * 2, 1.0),
+        2
+    )

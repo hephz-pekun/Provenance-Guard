@@ -826,3 +826,100 @@ It also creates a foundation for future reviewer tools by exposing:
 - Appeal activity
 - Confidence trends
 - Operational usage metrics
+
+# Stretch Feature: Ensemble Detection
+
+## Goal
+
+Improve attribution quality by incorporating a third independent detection signal into the confidence-scoring pipeline.
+
+The system currently uses:
+
+1. LLM-Based Classification
+2. Stylometric Analysis
+
+The stretch feature adds:
+
+3. Repetition Analysis
+
+This creates an ensemble detection pipeline that combines multiple independent signals.
+
+---
+
+## Signal 3: Repetition Analysis
+
+### What It Measures
+
+The repetition signal measures how frequently words are repeated within a piece of writing.
+
+AI-generated content often uses repeated words, phrases, and sentence structures more consistently than human-written content.
+
+### Output
+
+```text
+0.0 = Strongly Human
+1.0 = Strongly AI
+```
+
+Example:
+
+```json
+{
+  "repetition_score": 0.42
+}
+```
+
+### Why It Was Chosen
+
+This signal is:
+
+- Independent from the LLM classifier
+- Independent from stylometric analysis
+- Easy to compute
+- Interpretable
+
+### Blind Spots
+
+- Poetry may contain intentional repetition.
+- Persuasive writing often repeats key ideas.
+- Very short text provides little evidence.
+
+---
+
+## Ensemble Weighting
+
+The final confidence score will be calculated using:
+
+```text
+confidence =
+(0.5 × llm_score)
++
+(0.3 × stylometric_score)
++
+(0.2 × repetition_score)
+```
+
+### Rationale
+
+The LLM remains the strongest signal because it evaluates semantic patterns.
+
+The stylometric signal provides structural analysis.
+
+The repetition signal serves as an additional behavioral indicator.
+
+---
+
+## Validation Plan
+
+The ensemble detector will be tested using:
+
+1. AI-generated text
+2. Human-written text
+3. Academic writing
+4. Conversational writing
+
+Verification will confirm:
+
+- All three signals generate values.
+- Confidence scores vary across writing styles.
+- The new signal influences final decisions.

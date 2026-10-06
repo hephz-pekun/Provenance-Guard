@@ -524,5 +524,27 @@
     "llm_score": 0.5,
     "stylometric_score": 0.5,
     "status": "classified"
+  },
+  {
+    "content_id": "f6abcadc-0d09-4210-8e65-961ac4ceb27a",
+    "creator_id": "test-user",
+    "timestamp": "2026-10-06T02:38:31.341031",
+    "attribution": "likely_human",
+    "confidence": 0.08,
+    "llm_score": 0.05,
+    "stylometric_score": 0.2,
+    "repetition_score": 0.0,
+    "status": "classified"
+  },
+  {
+    "content_id": "95d84dbc-b121-4fc9-b98b-f0c4becdda1e",
+    "creator_id": "test-user",
+    "timestamp": "2026-10-06T02:38:51.066962",
+    "attribution": "likely_ai",
+    "confidence": 0.83,
+    "llm_score": 0.8,
+    "stylometric_score": 0.76,
+    "repetition_score": 1.0,
+    "status": "classified"
   }
 ]

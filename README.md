@@ -719,6 +719,50 @@ This provides reviewers and administrators with a high-level view of:
 
 The analytics dashboard extends the transparency goals of the project by exposing system-level behavior in addition to individual classification decisions.
 
+# Stretch Feature: Ensemble Detection
+
+The original implementation used two independent detection signals:
+
+1. LLM-based classification
+2. Stylometric analysis
+
+To improve robustness, a third signal was added:
+
+3. Repetition analysis
+
+## Repetition Analysis
+
+This signal measures repeated vocabulary within a submission.
+
+AI-generated content often exhibits more repeated words and phrases than naturally occurring human writing.
+
+Example:
+
+```text
+Human-written sample:
+repetition_score = 0.00
+```
+
+```text
+Repetitive sample:
+repetition_score = 1.00
+```
+
+## Ensemble Weighting
+
+The final confidence score is calculated using:
+
+```text
+confidence =
+(0.5 × llm_score)
++
+(0.3 × stylometric_score)
++
+(0.2 × repetition_score)
+```
+
+This approach reduces reliance on any individual detector and creates a three-signal ensemble attribution system.
+
 # Demo Video
 
 **Video Link:** INSERT_VIDEO_LINK_HERE
