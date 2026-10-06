@@ -124,6 +124,74 @@ def get_log():
     })
 
 
+@app.route("/stats", methods=["GET"])
+def get_stats():
+
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r") as f:
+            try:
+                logs = json.load(f)
+            except json.JSONDecodeError:
+                logs = []
+    else:
+        logs = []
+
+    classified_entries = [
+        entry for entry in logs
+        if entry.get("status") == "classified"
+    ]
+
+    appeal_entries = [
+        entry for entry in logs
+        if entry.get("status") == "under_review"
+    ]
+
+    total_submissions = len(classified_entries)
+
+    likely_human = sum(
+        1 for entry in classified_entries
+        if entry.get("attribution") == "likely_human"
+    )
+
+    uncertain = sum(
+        1 for entry in classified_entries
+        if entry.get("attribution") == "uncertain"
+    )
+
+    likely_ai = sum(
+        1 for entry in classified_entries
+        if entry.get("attribution") == "likely_ai"
+    )
+
+    appeals = len(appeal_entries)
+
+    if total_submissions > 0:
+        appeal_rate = round(
+            (appeals / total_submissions) * 100,
+            2
+        )
+
+        average_confidence = round(
+            sum(
+                entry.get("confidence", 0)
+                for entry in classified_entries
+            ) / total_submissions,
+            2
+        )
+    else:
+        appeal_rate = 0
+        average_confidence = 0
+
+    return jsonify({
+        "total_submissions": total_submissions,
+        "likely_human": likely_human,
+        "uncertain": uncertain,
+        "likely_ai": likely_ai,
+        "appeals": appeals,
+        "appeal_rate": appeal_rate,
+        "average_confidence": average_confidence
+    })
+
 @app.route("/")
 def home():
     return jsonify({

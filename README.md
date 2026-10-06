@@ -670,15 +670,54 @@ which confirmed HTTP 429 enforcement.
 
 ---
 
-# Future Improvements
+# Stretch Feature: Analytics Dashboard
 
-- Replace in-memory storage with a persistent database.
-- Add reviewer dashboards and authentication.
-- Expand stylometric analysis with additional linguistic features.
-- Add more independent detection signals.
-- Support longer documents and additional content formats.
+To provide greater transparency into system behavior, I implemented an analytics dashboard endpoint.
 
----
+## Endpoint
+
+```http
+GET /stats
+```
+
+## Example Response
+
+```json
+{
+  "total_submissions": 52,
+  "likely_human": 46,
+  "uncertain": 6,
+  "likely_ai": 0,
+  "appeals": 1,
+  "appeal_rate": 1.92,
+  "average_confidence": 0.30
+}
+```
+
+## Metrics
+
+The dashboard reports:
+
+- Total submissions
+- Number of likely-human classifications
+- Number of uncertain classifications
+- Number of likely-AI classifications
+- Total appeals
+- Appeal rate
+- Average confidence score
+
+## How It Works
+
+The endpoint reads data from the audit log and calculates aggregate statistics.
+
+This provides reviewers and administrators with a high-level view of:
+
+- Classification patterns
+- User appeal activity
+- Confidence trends
+- Overall system usage
+
+The analytics dashboard extends the transparency goals of the project by exposing system-level behavior in addition to individual classification decisions.
 
 # Demo Video
 

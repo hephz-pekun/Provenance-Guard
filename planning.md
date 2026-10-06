@@ -632,3 +632,197 @@ which confirmed HTTP 429 enforcement.
 
 ---
 
+# Stretch Feature: Analytics Dashboard
+
+## Goal
+
+Provide a high-level view of system behavior by aggregating information from classification and appeal activity.
+
+The dashboard will help reviewers and administrators understand:
+
+- Classification patterns
+- Appeal activity
+- Confidence-score trends
+- Overall system usage
+
+This feature extends the transparency and auditability goals of the project beyond individual content classifications.
+
+---
+
+## Dashboard Endpoint
+
+```http
+GET /stats
+```
+
+### Planned Response
+
+```json
+{
+  "total_submissions": 25,
+  "likely_human": 12,
+  "uncertain": 9,
+  "likely_ai": 4,
+  "appeals": 3,
+  "appeal_rate": 12.0,
+  "average_confidence": 0.37
+}
+```
+
+---
+
+## Dashboard Metrics
+
+### Total Submissions
+
+Tracks the total number of classified content submissions.
+
+Purpose:
+
+- Measure overall system usage.
+- Provide context for other dashboard metrics.
+
+---
+
+### Classification Distribution
+
+Tracks the number of classifications in each category:
+
+- Likely Human
+- Uncertain
+- Likely AI
+
+Purpose:
+
+- Identify attribution trends.
+- Reveal whether classifications are concentrated in a particular category.
+
+---
+
+### Appeal Count
+
+Tracks the number of appeals submitted by creators.
+
+Purpose:
+
+- Measure how often classifications are challenged.
+- Provide insight into system trust and user satisfaction.
+
+---
+
+### Appeal Rate
+
+Calculated as:
+
+```text
+(number of appeals / total submissions) × 100
+```
+
+Purpose:
+
+- Put appeal activity in context.
+- Identify whether confidence thresholds may require adjustment.
+
+---
+
+### Average Confidence Score
+
+Calculated as:
+
+```text
+sum(confidence scores) / total classifications
+```
+
+Purpose:
+
+- Provide an overall measure of system certainty.
+- Reveal whether classifications frequently fall into the uncertainty range.
+
+---
+
+## Data Source
+
+The dashboard will aggregate information already stored in the audit log.
+
+Classification entries provide:
+
+```json
+{
+  "attribution": "likely_human",
+  "confidence": 0.27,
+  "status": "classified"
+}
+```
+
+Appeal entries provide:
+
+```json
+{
+  "status": "under_review",
+  "appeal_reasoning": "..."
+}
+```
+
+---
+
+## Architecture Impact
+
+Current Workflow
+
+```text
+Submission
+    |
+    v
+Classification
+    |
+    v
+Audit Log
+```
+
+Updated Workflow
+
+```text
+Submission
+    |
+    v
+Classification
+    |
+    v
+Audit Log
+    |
+    v
+Analytics Dashboard
+    |
+    v
+Reviewer Insights
+```
+
+---
+
+## Validation Plan
+
+The dashboard will be tested by:
+
+1. Creating multiple classified submissions.
+2. Recording at least one appeal.
+3. Calling the `GET /stats` endpoint.
+4. Verifying that:
+
+   - Submission counts match audit-log entries.
+   - Classification counts are accurate.
+   - Appeal counts are correct.
+   - Appeal rate is calculated correctly.
+   - Average confidence scores are calculated correctly.
+
+---
+
+## Expected Benefits
+
+The analytics dashboard provides transparency at the system level rather than only the individual-content level.
+
+It also creates a foundation for future reviewer tools by exposing:
+
+- Classification trends
+- Appeal activity
+- Confidence trends
+- Operational usage metrics
