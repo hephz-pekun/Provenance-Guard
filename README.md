@@ -35,31 +35,34 @@ Provenance-Guard/
 
 ## Submission Flow
 
-```text
+``text
 POST /submit
       |
       v
-Raw Text Input
+Text Content
+Metadata
       |
       v
 LLM Classification
-(GPT-OSS-20B via Groq)
       |
       v
 Stylometric Analysis
       |
       v
+Repetition Analysis
+      |
+      v
+Metadata Analysis
+      |
+      v
 Confidence Score Calculation
       |
       v
-Transparency Label Generation
+Transparency Label
       |
       v
-Audit Log Entry
-      |
-      v
-JSON Response
-```
+Audit Log
+``
 
 ## Appeal Flow
 
@@ -144,9 +147,13 @@ The final confidence score is calculated using weighted averaging:
 
 ```text
 confidence =
-(0.6 × llm_score)
+(0.4 * llm_score)
 +
-(0.4 × stylometric_score)
+(0.25 * style_score)
++
+(0.15 * repetition)
++
+(0.20 * metadata_signal)
 ```
 
 The language-model signal receives a larger weight because it evaluates broader semantic patterns, while stylometric analysis provides an independent structural cross-check.
@@ -256,12 +263,16 @@ Additional review may be necessary. Creators may appeal this result if they disa
 
 ```json
 {
-  "content_id": "uuid",
+  "content_id": "...",
   "attribution": "likely_human",
-  "confidence": 0.27,
+  "confidence": 0.21,
   "label": "...",
   "llm_score": 0.20,
-  "stylometric_score": 0.38
+  "stylometric_score": 0.50,
+  "repetition_score": 0.00,
+  "metadata_score": 0.00,
+  "verified_creator": false,
+  "certificate_id": null
 }
 ```
 
@@ -478,6 +489,7 @@ Requirements:
 - UUID-based content identifiers
  
 Return starter code for app.py.
+```
 
 ### AI Output
 
@@ -529,6 +541,7 @@ Requirements:
 - Work as an independent signal alongside an LLM classifier
 
 For each feature, explain what it measures and its limitations.
+```
 
 ### AI Output
 
@@ -553,6 +566,7 @@ I also modified the confidence-scoring approach by assigning:
 ```text
 60% weight to the LLM signal
 40% weight to the stylometric signal
+```
 
 ---
 
@@ -924,15 +938,5 @@ The resulting metadata scores varied as expected and were successfully recorded 
 
 # Demo Video
 
-**Video Link:** INSERT_VIDEO_LINK_HERE
+**Video Link:** https://www.youtube.com/watch?v=DItw1D5fpdo
 
-## Demonstration Checklist
-
-1. Start the Flask application.
-2. Submit content through `/submit`.
-3. Review confidence scores and labels.
-4. View audit-log entries through `/log`.
-5. Submit an appeal through `/appeal`.
-6. Review appeal entries in the audit log.
-7. Demonstrate rate limiting.
-8. Discuss design decisions and limitations.

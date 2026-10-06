@@ -1058,3 +1058,15 @@ Verification will confirm that:
 - Different metadata produces different scores
 - Metadata affects confidence scoring
 - Metadata scores are recorded in audit logs
+
+# IMplementation Changes
+Note: The original planned implementation used two signals. During development, the system was extended through the Ensemble Detection and Multi-Modal stretch features.
+
+The final implementation uses four signals:
+
+- LLM classification
+- Stylometric analysis
+- Repetition analysis
+- Metadata analysis
+
+with an expanded weighted confidence calculation.
