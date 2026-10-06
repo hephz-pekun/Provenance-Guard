@@ -7,6 +7,7 @@ import json
 import os
 from detector import (
     llm_classifier,
+    metadata_score,
     stylometric_score,
     repetition_score
 )
@@ -65,11 +66,15 @@ def submit():
     style_score = stylometric_score(text)
     repetition = repetition_score(text)
     creator_certificate = VERIFIED_CREATORS.get(creator_id)
+    metadata = data.get("metadata", {})
+
+    metadata_signal = metadata_score(metadata)
 
     confidence = round(
-        (0.5 * llm_score) +
-        (0.3 * style_score) +
-        (0.2 * repetition),
+        (0.4 * llm_score) +
+        (0.25 * style_score) +
+        (0.15 * repetition) +
+        (0.20 * metadata_signal),
         2
     )
     content_id = str(uuid.uuid4())
@@ -94,6 +99,7 @@ def submit():
         "attribution": attribution,
         "confidence": confidence,
         "llm_score": llm_score,
+        "metadata_score": metadata_signal,
         "stylometric_score": style_score,
         "repetition_score": repetition,
         "status": "classified"
@@ -110,6 +116,7 @@ def submit():
             "attribution": attribution,
             "confidence": confidence,
             "llm_score": llm_score,
+            "metadata_score": metadata_signal,
             "stylometric_score": style_score,
             "repetition_score": repetition,
             "status": "classified"
@@ -121,6 +128,7 @@ def submit():
         "confidence": confidence,
         "label": generate_label(confidence),
         "llm_score": llm_score,
+        "metadata_score": metadata_signal,
         "stylometric_score": style_score,
         "repetition_score": repetition,
         "verified_creator": creator_certificate is not None,

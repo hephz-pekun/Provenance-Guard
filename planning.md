@@ -994,3 +994,67 @@ The provenance certificate:
    - `verified_creator`
    - `certificate_id`
 4. Confirm provenance information is recorded in audit logs.
+
+# Stretch Feature: Multi-Modal Support
+
+## Goal
+
+Extend the attribution pipeline beyond text-only analysis by incorporating structured metadata as a second content modality.
+
+The system will analyze:
+
+1. Text content
+2. Creator-provided metadata
+
+---
+
+## Metadata Format
+
+Example:
+
+```json
+{
+  "title": "AI in Education",
+  "category": "Education",
+  "tags": ["ai", "teaching", "technology"]
+}
+```
+
+---
+
+## Metadata Detection Signal
+
+The metadata signal evaluates:
+
+- Title completeness
+- Presence of metadata fields
+- Tag information
+
+The output contributes to the final confidence score.
+
+---
+
+## Benefits
+
+This feature:
+
+- Expands provenance information beyond text
+- Demonstrates multi-modal processing
+- Reduces dependence on text-only signals
+- Creates a foundation for future support of additional content types
+
+---
+
+## Validation Plan
+
+The feature will be tested using:
+
+1. Complete metadata
+2. Incomplete metadata
+3. Missing metadata
+
+Verification will confirm that:
+
+- Different metadata produces different scores
+- Metadata affects confidence scoring
+- Metadata scores are recorded in audit logs

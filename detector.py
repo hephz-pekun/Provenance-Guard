@@ -92,3 +92,22 @@ def repetition_score(text):
         min(score * 2, 1.0),
         2
     )
+
+def metadata_score(metadata):
+
+    if not metadata:
+        return 0.5
+
+    score = 0
+
+    title = metadata.get("title", "")
+
+    if len(title.split()) < 3:
+        score += 0.2
+
+    tags = metadata.get("tags", [])
+
+    if len(tags) == 0:
+        score += 0.2
+
+    return min(round(score, 2), 1.0)

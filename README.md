@@ -836,6 +836,92 @@ The feature was tested by:
    - a certificate ID was displayed
    - attribution scoring continued to operate normally
 
+# Stretch Feature: Multi-Modal Support
+
+The original system analyzed only text submissions.
+
+To expand provenance analysis beyond text, I extended the system to support creator-provided metadata alongside textual content.
+
+## Supported Modalities
+
+1. Text content
+2. Structured metadata
+
+### Example Request
+
+```json
+{
+  "text": "This article discusses the role of AI in modern education.",
+  "creator_id": "test-user",
+  "metadata": {
+    "title": "AI in Education",
+    "category": "Education",
+    "tags": ["ai", "teaching", "technology"]
+  }
+}
+```
+
+---
+
+## Metadata Analysis
+
+The metadata signal evaluates:
+
+- Title completeness
+- Metadata availability
+- Tag information
+
+The metadata signal produces a score between:
+
+```text
+0.0 = More complete metadata
+1.0 = Less complete metadata
+```
+
+### Example Outputs
+
+#### Complete Metadata
+
+```text
+metadata_score = 0.0
+```
+
+#### Weak Metadata
+
+```text
+metadata_score = 0.4
+```
+
+#### No Metadata
+
+```text
+metadata_score = 0.5
+```
+
+---
+
+## Confidence Scoring
+
+The metadata signal is incorporated into the ensemble detector alongside:
+
+1. LLM-based classification
+2. Stylometric analysis
+3. Repetition analysis
+
+This allows the final confidence score to reflect information from multiple content modalities rather than relying only on text.
+
+---
+
+## Validation
+
+The feature was validated using:
+
+- Complete metadata submissions
+- Incomplete metadata submissions
+- Submissions without metadata
+
+The resulting metadata scores varied as expected and were successfully recorded in the audit log.
+
 # Demo Video
 
 **Video Link:** INSERT_VIDEO_LINK_HERE
