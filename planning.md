@@ -923,3 +923,74 @@ Verification will confirm:
 - All three signals generate values.
 - Confidence scores vary across writing styles.
 - The new signal influences final decisions.
+
+# Stretch Feature: Provenance Certificate
+
+## Goal
+
+Allow creators to earn a verification credential that indicates they have completed an additional human-verification step.
+
+The credential supplements attribution results but does not override them.
+
+---
+
+## Verification Endpoint
+
+```http
+POST /verify
+```
+
+### Request
+
+```json
+{
+  "creator_id": "user123"
+}
+```
+
+### Response
+
+```json
+{
+  "creator_id": "user123",
+  "verified_human": true,
+  "certificate_id": "VH-001"
+}
+```
+
+---
+
+## Content Display
+
+Verified creators will have provenance information attached to their content.
+
+Example:
+
+```json
+{
+  "verified_creator": true,
+  "certificate_id": "VH-001"
+}
+```
+
+---
+
+## Benefits
+
+The provenance certificate:
+
+- increases creator trust
+- adds creator-level provenance signals
+- complements content-level attribution
+- creates a foundation for future identity workflows
+
+---
+
+## Validation Plan
+
+1. Verify a creator using `POST /verify`.
+2. Submit content using the verified creator ID.
+3. Confirm the response contains:
+   - `verified_creator`
+   - `certificate_id`
+4. Confirm provenance information is recorded in audit logs.

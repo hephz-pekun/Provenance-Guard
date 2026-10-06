@@ -763,6 +763,79 @@ confidence =
 
 This approach reduces reliance on any individual detector and creates a three-signal ensemble attribution system.
 
+# Stretch Feature: Provenance Certificate
+
+To extend provenance tracking beyond content attribution, I implemented a Verified Human Creator credential.
+
+## Endpoint
+
+```http
+POST /verify
+```
+
+### Example Request
+
+```json
+{
+  "creator_id": "test-user"
+}
+```
+
+### Example Response
+
+```json
+{
+  "creator_id": "test-user",
+  "verified_human": true,
+  "certificate_id": "VH-001"
+}
+```
+
+---
+
+## Verified Content Example
+
+After verification, creator provenance information is attached to content submissions.
+
+Example:
+
+```json
+{
+  "content_id": "c3d6bd05-6764-4a53-b0dd-1a8f732d27a2",
+  "verified_creator": true,
+  "certificate_id": "VH-001",
+  "attribution": "likely_human",
+  "confidence": 0.30
+}
+```
+
+---
+
+## How It Works
+
+The system stores verified creators and assigns a unique certificate identifier.
+
+When a verified creator submits content:
+
+- the attribution pipeline still runs normally
+- confidence scoring still applies
+- the creator's provenance credential is displayed alongside the result
+
+The credential does not override attribution decisions. Instead, it provides additional provenance information about the creator.
+
+---
+
+## Validation
+
+The feature was tested by:
+
+1. Verifying a creator through `POST /verify`.
+2. Submitting content under that creator ID.
+3. Confirming that:
+   - `verified_creator` returned `true`
+   - a certificate ID was displayed
+   - attribution scoring continued to operate normally
+
 # Demo Video
 
 **Video Link:** INSERT_VIDEO_LINK_HERE

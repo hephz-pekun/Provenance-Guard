@@ -21,8 +21,7 @@ limiter = Limiter(
 
 LOG_FILE = "audit_log.json"
 CONTENT_STORE = {}
-
-
+VERIFIED_CREATORS = {}
 
 def log_entry(entry):
     """
@@ -65,6 +64,7 @@ def submit():
     llm_score = llm_classifier(text)
     style_score = stylometric_score(text)
     repetition = repetition_score(text)
+    creator_certificate = VERIFIED_CREATORS.get(creator_id)
 
     confidence = round(
         (0.5 * llm_score) +
@@ -73,7 +73,7 @@ def submit():
         2
     )
     content_id = str(uuid.uuid4())
-
+    
     if confidence >= 0.70:
         attribution = "likely_ai"
     elif confidence >= 0.40:
@@ -85,6 +85,11 @@ def submit():
     log_data = {
         "content_id": content_id,
         "creator_id": creator_id,
+        "verified_creator": creator_certificate is not None,
+        "certificate_id": (
+            creator_certificate["certificate_id"]
+            if creator_certificate else None
+        ),
         "timestamp": datetime.utcnow().isoformat(),
         "attribution": attribution,
         "confidence": confidence,
@@ -97,6 +102,11 @@ def submit():
     log_entry(log_data)
     CONTENT_STORE[content_id] = {
             "creator_id": creator_id,
+            "verified_creator": creator_certificate is not None,
+            "certificate_id": (
+                creator_certificate["certificate_id"]
+                if creator_certificate else None
+            ),
             "attribution": attribution,
             "confidence": confidence,
             "llm_score": llm_score,
@@ -112,7 +122,12 @@ def submit():
         "label": generate_label(confidence),
         "llm_score": llm_score,
         "stylometric_score": style_score,
-        "repetition_score": repetition
+        "repetition_score": repetition,
+        "verified_creator": creator_certificate is not None,
+        "certificate_id": (
+            creator_certificate["certificate_id"]
+            if creator_certificate else None
+        )
     })
 
 
@@ -234,6 +249,31 @@ def appeal():
     return jsonify({
         "message": "Appeal received.",
         "status": "under_review"
+    })
+
+@app.route("/verify", methods=["POST"])
+def verify_creator():
+
+    data = request.get_json()
+
+    creator_id = data.get("creator_id")
+
+    if not creator_id:
+        return jsonify({
+            "error": "creator_id is required."
+        }), 400
+
+    certificate_id = f"VH-{len(VERIFIED_CREATORS) + 1:03}"
+
+    VERIFIED_CREATORS[creator_id] = {
+        "verified_human": True,
+        "certificate_id": certificate_id
+    }
+
+    return jsonify({
+        "creator_id": creator_id,
+        "verified_human": True,
+        "certificate_id": certificate_id
     })
 
 def generate_label(confidence):

@@ -546,5 +546,18 @@
     "stylometric_score": 0.76,
     "repetition_score": 1.0,
     "status": "classified"
+  },
+  {
+    "content_id": "c3d6bd05-6764-4a53-b0dd-1a8f732d27a2",
+    "creator_id": "test-user",
+    "verified_creator": true,
+    "certificate_id": "VH-001",
+    "timestamp": "2026-10-06T02:51:19.999271",
+    "attribution": "likely_human",
+    "confidence": 0.3,
+    "llm_score": 0.1,
+    "stylometric_score": 0.5,
+    "repetition_score": 0.5,
+    "status": "classified"
   }
 ]
